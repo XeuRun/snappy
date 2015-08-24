@@ -32,6 +32,11 @@ abstract class AbstractGenerator implements GeneratorInterface
     public $temporaryFiles = array();
 
     /**
+     * @var array
+     */
+    public $allowExitCodes = array();
+
+    /**
      * Constructor
      *
      * @param string $binary
@@ -332,7 +337,7 @@ abstract class AbstractGenerator implements GeneratorInterface
      */
     protected function checkProcessStatus($status, $stdout, $stderr, $command)
     {
-        if (0 !== $status and '' !== $stderr) {
+        if ((0 !== $status && !in_array($status, $this->allowExitCodes)) and '' !== $stderr) {
             throw new \RuntimeException(sprintf(
                 'The exit status code \'%s\' says something went wrong:'."\n"
                 .'stderr: "%s"'."\n"
@@ -554,6 +559,20 @@ abstract class AbstractGenerator implements GeneratorInterface
     public function setTemporaryFolder($temporaryFolder)
     {
         $this->temporaryFolder = $temporaryFolder;
+
+        return $this;
+    }
+
+    /**
+     * Set allowExitCodes
+     *
+     * @param array $allowExitCodes
+     *
+     * @return $this
+     */
+    public function setAllowExitCodes($allowExitCodes)
+    {
+        $this->allowExitCodes = $allowExitCodes;
 
         return $this;
     }
